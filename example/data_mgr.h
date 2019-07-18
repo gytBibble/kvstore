@@ -28,9 +28,9 @@ protected:
     void NewFile();
 
 private:
-    int         cur_file_no_   = 0;
-    int         cur_file_size_ = 0;
-    std::map<int, std::unique_ptr<FileIo>> files_info_;
+    int         cur_file_no_   = 0; //当前文件编号
+    int         cur_file_size_ = 0; //当前文件大小
+    std::map<int, std::unique_ptr<FileIo>> files_info_;//文件编号对应文件
 
     KVString    dir_;
 

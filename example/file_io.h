@@ -36,8 +36,9 @@ public:
 
     static int ScanDir(const char * dir, bool create_if_no_exist, std::vector<KVString> &files);
 
+    //返回数据存放地址
     static KVString Dir(const char * dir) {
-        KVString ret(dir);
+        KVString ret(dir);   
         if (ret.Size() > 1 && *(ret.Buf() + ret.Size() - 2) != '/') {
             ret = ret + "/";
         }
@@ -45,5 +46,5 @@ public:
     }
 
 private:
-    FILE *   fh_;
+    FILE *   fh_; //文件指针
 };

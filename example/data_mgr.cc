@@ -16,7 +16,7 @@ int DataMgr::Init(const char * dir, int file_size) {
     }
     return 0;
 }
-
+//销毁map
 void DataMgr::Release( ) {
     files_info_.clear();
 }
@@ -28,6 +28,7 @@ void DataMgr::Clear() {
     }
 }
 
+//写入(k,v)对
 uint64_t DataMgr::Append(KVString & key, KVString & val) {
     uint64_t pos = cur_file_no_;
     pos <<= 32;
@@ -45,6 +46,7 @@ uint64_t DataMgr::Append(KVString & key, KVString & val) {
     return pos;
 }
 
+//创建一个新的.data文件
 void DataMgr::NewFile() {
     cur_file_no_ ++;
     files_info_[cur_file_no_] = std::unique_ptr<FileIo>(
@@ -52,6 +54,7 @@ void DataMgr::NewFile() {
     cur_file_size_ = 0;
 }
 
+//读取pos处(k,v)对
 int DataMgr::Get(uint64_t pos, KVString & key, KVString &val) {
     int no     = (pos >> 32) & 0xffffffff;
     int offset = (pos & 0xffffffff);
@@ -62,6 +65,8 @@ int DataMgr::Get(uint64_t pos, KVString & key, KVString &val) {
     }
 }
 
+
+//返回数据文件的个数，确定当前操作文件
 int DataMgr::ScanDir(const char * dir) {
     std::vector<KVString> files;
     int num = FileIo::ScanDir(dir, true, files);
@@ -69,6 +74,7 @@ int DataMgr::ScanDir(const char * dir) {
         return 0;
     }
 
+    //文件名转编号
     auto filename2num = [](KVString & name)->int {
         const char * data_ext = ".data";
         if (name.Suffix(data_ext)) {
@@ -111,7 +117,8 @@ int DataMgr::ScanDir(const char * dir) {
     return file_num;
 }
 
-KVString DataMgr::No2FileName(int no, const char * ext) {
+//编号转化为文件名
+KVString DataMgr::No2FileName(int no, const char * ext) {   
     char name[256];
     strcpy(name, dir_.Buf());
     snprintf(name + strlen(name), sizeof(name), "%010d%s", no, ext);

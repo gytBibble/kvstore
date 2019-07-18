@@ -1,5 +1,6 @@
 #include "meta_mgr.h"
 
+//初始化
 bool MetaMgr::Init(const char * dir) {
     keys_map_.clear();
 
@@ -11,6 +12,7 @@ bool MetaMgr::Init(const char * dir) {
     return true;
 }
 
+//写入（k,p)对
 void MetaMgr::Set(const KVString &key, uint64_t pos) {
     keys_map_[key] = pos;
     KVString val(reinterpret_cast<char *>(&pos), sizeof(pos));
@@ -18,6 +20,7 @@ void MetaMgr::Set(const KVString &key, uint64_t pos) {
     key_fh_->Flush();
 }
 
+//获取key对应的pos
 uint64_t MetaMgr::Get(const KVString &key) {
     if (keys_map_.count(key) > 0) {
         return keys_map_[key];
@@ -26,6 +29,7 @@ uint64_t MetaMgr::Get(const KVString &key) {
     }
 }
 
+//读取.key文件内容到内存
 int MetaMgr::RestoreMeta() {
     KVString key;
     KVString val;

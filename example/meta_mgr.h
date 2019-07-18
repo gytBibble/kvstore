@@ -17,6 +17,7 @@ public:
 protected:
     int RestoreMeta();
 
+    //获取文件路径
     static KVString GetPath(KVString &dir, const char * name) {
         KVString path = dir;
         path = path + name;
@@ -24,7 +25,7 @@ protected:
     }
 
 private:
-    std::map<KVString, uint64_t> keys_map_;
+    std::map<KVString, uint64_t> keys_map_;//存储key对应的存储位置
 
     std::unique_ptr<FileIo> key_fh_;
 

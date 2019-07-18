@@ -7,6 +7,8 @@
 
 #include "easylogging++.h"
 
+
+//构造函数，打开文件并将文件指针定位到文件尾
 FileIo::FileIo(const char * name) {
     const auto mode = "a+";
     fh_ = fopen(name, mode);
@@ -14,15 +16,16 @@ FileIo::FileIo(const char * name) {
         LOG(ERROR) << "open file failed: " << errno << "-" <<  strerror(errno);
         exit(-1);
     }
-    fseek(fh_, 0, SEEK_END);
+    fseek(fh_, 0, SEEK_END);//fh_定位到文件尾
 }
-
+//xigou函数，关闭文件
 FileIo::~FileIo() {
     if (fh_ != NULL) {
         fclose(fh_);
     }
 }
 
+//写入数据以及大小
 int FileIo::Append(const char * buf, int size) {
     fseek(fh_, 0, SEEK_END);
 
@@ -38,10 +41,12 @@ int FileIo::Append(const char * buf, int size) {
     return size + sizeof(size);
 }
 
+//写入一个项目info
 int FileIo::Append(KVString & info) {
     return Append(info.Buf(), info.Size());
 }
 
+//写入一组数据（Key，value）对 的大小、数据
 int FileIo::Append(KVString &key, KVString & val) {
     fseek(fh_, 0, SEEK_END);
 
@@ -67,6 +72,7 @@ int FileIo::Append(KVString &key, KVString & val) {
     return key_size + val_size + sizeof(key_size) + sizeof(val_size);
 }
 
+//从文件offset处读取size大小的数据
 int FileIo::Read(int offset, int size, KVString &out) {
     fseek(fh_, offset, SEEK_SET);
 
@@ -77,6 +83,7 @@ int FileIo::Read(int offset, int size, KVString &out) {
     return ret * size;
 }
 
+//读一个(k,v)对
 int FileIo::ReadKV(int offset, KVString &key, KVString &val) {
     fseek(fh_, offset, SEEK_SET);
 
@@ -102,12 +109,14 @@ int FileIo::ReadKV(int offset, KVString &key, KVString &val) {
     return key_size + val_size + sizeof(key_size) + sizeof(val_size);
 }
 
+//文件大小
 int FileIo::Size() {
     fseek(fh_, 0, SEEK_END);
 
     return ftell(fh_);
 }
 
+//删除name文件
 bool FileIo::Remove(const char * name) {
     if (name == nullptr) {
         return true;
@@ -129,9 +138,10 @@ bool FileIo::Remove(const char * name) {
     return true;
 }
 
+//获取文件列表,返回文件个数
 int FileIo::ScanDir(const char * dir, bool create_if_no_exist, std::vector<KVString> &files) {
     struct stat st;
-    if (stat(dir, &st) == -1 || !S_ISDIR(st.st_mode)) {
+    if (stat(dir, &st) == -1 || !S_ISDIR(st.st_mode)) {  //没有该文件夹就创建一个文件夹
         if (create_if_no_exist) {
             mkdir(dir, 0755);
         }
